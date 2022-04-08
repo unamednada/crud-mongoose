@@ -1,15 +1,15 @@
 /* eslint-disable no-underscore-dangle */
 import { Request, Response } from 'express';
 import Controller, { RequestWithBody, ResponseError } from '.';
-import FrameService from '../Services/Frame';
-import Frame from '../Interfaces/Frame';
+import LensService from '../Services/Lens';
+import Lens from '../Interfaces/Lens';
 
-class FrameController extends Controller<Frame> {
+class LensController extends Controller<Lens> {
   private _route: string;
 
   constructor(
-    service = new FrameService(),
-    route = '/frames',
+    service = new LensService(),
+    route = '/lenses',
   ) {
     super(service);
     this._route = route;
@@ -18,19 +18,19 @@ class FrameController extends Controller<Frame> {
   get route() { return this._route; }
 
   create = async (
-    req: RequestWithBody<Frame>,
-    res: Response<Frame | ResponseError>,
+    req: RequestWithBody<Lens>,
+    res: Response<Lens | ResponseError>,
   ): Promise<typeof res> => {
     const { body } = req;
     try {
-      const frame = await this.service.create(body);
-      if (!frame) {
+      const lens = await this.service.create(body);
+      if (!lens) {
         return res.status(500).json({ error: this.errors.internal });
       }
-      if ('error' in frame) {
-        return res.status(400).json(frame);
+      if ('error' in lens) {
+        return res.status(400).json(lens);
       }
-      return res.status(201).json(frame);
+      return res.status(201).json(lens);
     } catch (err) {
       return res.status(500).json({ error: this.errors.internal });
     }
@@ -38,13 +38,13 @@ class FrameController extends Controller<Frame> {
 
   readOne = async (
     req: Request<{ id: string }>,
-    res: Response<Frame | ResponseError>,
+    res: Response<Lens | ResponseError>,
   ): Promise<typeof res> => {
     const { id } = req.params;
     try {
-      const frame = await this.service.readOne(id);
-      return frame
-        ? res.json(frame)
+      const lens = await this.service.readOne(id);
+      return lens
+        ? res.json(lens)
         : res.status(404).json({ error: this.errors.notFound });
     } catch (error) {
       return res.status(500).json({ error: this.errors.internal });
@@ -52,4 +52,4 @@ class FrameController extends Controller<Frame> {
   };
 }
 
-export default FrameController;
+export default LensController;
